@@ -1,26 +1,130 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0b0d12;
+  --foreground: #f4eee5;
+  --muted: #c4b7aa;
+  --paper: #f3e7d5;
+  --paper-ink: #201811;
+  --paper-rule: rgba(77, 60, 45, 0.12);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-cormorant);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
+  min-height: 100vh;
+  position: relative;
+  background:
+    radial-gradient(circle at top, rgba(197, 143, 92, 0.15), transparent 28%),
+    radial-gradient(circle at 18% 18%, rgba(84, 104, 126, 0.17), transparent 24%),
+    radial-gradient(circle at 84% 20%, rgba(116, 66, 58, 0.16), transparent 22%),
+    linear-gradient(180deg, #131922 0%, #0c1016 48%, #08090d 100%);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-manrope), sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+  opacity: 0.08;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, transparent 38%, rgba(0, 0, 0, 0.14) 72%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(0, 0, 0, 0.24));
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(201, 141, 87, 0.36);
+  color: #fff8ef;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.notepad-surface {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(to bottom, transparent 0, transparent 4.95rem, var(--paper-rule) 4.95rem, transparent 5rem),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2.82rem,
+      rgba(72, 58, 45, 0.12) 2.82rem,
+      rgba(72, 58, 45, 0.12) 2.9rem
+    ),
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.78), transparent 40%);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.34),
+    0 12px 30px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -18px 40px rgba(166, 136, 96, 0.08);
+}
+
+.notepad-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18),
+    transparent 18%,
+    transparent 82%,
+    rgba(132, 103, 74, 0.08)
+  );
+  mix-blend-mode: soft-light;
+}
+
+.notepad-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 3.45rem,
+    rgba(181, 93, 87, 0.22) 3.45rem,
+    rgba(181, 93, 87, 0.22) 3.54rem,
+    transparent 3.54rem
+  );
+}
+
+@media (max-width: 640px) {
+  .notepad-surface::after {
+    background: linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 2.95rem,
+      rgba(181, 93, 87, 0.22) 2.95rem,
+      rgba(181, 93, 87, 0.22) 3.04rem,
+      transparent 3.04rem
+    );
+  }
 }
