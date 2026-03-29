@@ -22,6 +22,7 @@ export const whyData = {
       "I will leave an impact and will leave a ripple in time and space. I will have had use, meaning, a purpose, an impact.",
       "I will earn respect and awe from everyone. I will be admired.",
       "I'll have real power to make anything happen and make any other dreams or hobbies come to fruition.",
+      "I will be able to meet and connect with anyone. I'll be able to join my idols.",
     ],
   },
   staySame: {
@@ -37,6 +38,7 @@ export const whyData = {
       "I can't just get anyone I want now.",
       "I will be forgotten after I die.",
       "I will never experience the 0.001% lifestyle.",
+      "I will never meet any of my idols or be able to connect with great, unique, and successful people.",
     ],
   },
 } as const satisfies WhyData;
