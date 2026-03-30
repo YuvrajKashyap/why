@@ -15,24 +15,24 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://why.yuvrajkashyap.com"),
-  title: "Why",
+  title: "Why - Yuvraj Kashyap",
   description:
     "A premium personal manifesto page that keeps ambition and consequence impossible to ignore.",
-  applicationName: "Why",
+  applicationName: "Why - Yuvraj Kashyap",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Why",
+    title: "Why - Yuvraj Kashyap",
     description:
       "A premium personal manifesto page that keeps ambition and consequence impossible to ignore.",
-    siteName: "Why",
+    siteName: "Why - Yuvraj Kashyap",
     type: "website",
     url: "https://why.yuvrajkashyap.com",
   },
   twitter: {
     card: "summary",
-    title: "Why",
+    title: "Why - Yuvraj Kashyap",
     description:
       "A premium personal manifesto page that keeps ambition and consequence impossible to ignore.",
   },
