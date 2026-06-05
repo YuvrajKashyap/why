@@ -1,6 +1,8 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { WantListOverlay } from "@/components/WantListOverlay";
 import { whyData } from "@/data/whyData";
 
 type TornPageProps = {
@@ -10,9 +12,10 @@ type TornPageProps = {
     items: readonly string[];
   };
   skipMotion: boolean;
+  onSecretPin: (idx: number) => void;
 };
 
-function TornPage({ idx, section, skipMotion }: TornPageProps) {
+function TornPage({ idx, section, skipMotion, onSecretPin }: TornPageProps) {
   const rotation = idx === 0 ? -1.8 : 1.4;
   const hoverRotation = idx === 0 ? -0.4 : 0.3;
   const pinColor = idx === 0 ? "#c4543a" : "#3a6e8c";
@@ -37,7 +40,13 @@ function TornPage({ idx, section, skipMotion }: TornPageProps) {
           : { rotate: hoverRotation, y: -6, transition: { duration: 0.35 } }
       }
     >
-      <div className="absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2">
+      <div
+        className="absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2"
+        onPointerDown={(event) => {
+          event.stopPropagation();
+          onSecretPin(idx);
+        }}
+      >
         <div
           className="relative h-5 w-5 rounded-full shadow-[0_3px_8px_rgba(0,0,0,0.4),0_1px_2px_rgba(0,0,0,0.3)]"
           style={{
@@ -158,6 +167,63 @@ function TornPage({ idx, section, skipMotion }: TornPageProps) {
 export function TornPinnedHero() {
   const reduceMotion = useReducedMotion();
   const skipMotion = !!reduceMotion;
+  const [secretStep, setSecretStep] = useState(0);
+  const [wantListOpen, setWantListOpen] = useState(false);
+
+  useEffect(() => {
+    let typedBuffer = "";
+
+    function handleKeyDown(event: KeyboardEvent) {
+      const target = event.target;
+      const isEditable =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT");
+
+      if (
+        isEditable ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.key.length !== 1
+      ) {
+        return;
+      }
+
+      typedBuffer = `${typedBuffer}${event.key.toLowerCase()}`.slice(-8);
+
+      if (typedBuffer === "wantlist") {
+        setWantListOpen(true);
+        setSecretStep(0);
+        typedBuffer = "";
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  function handleTitleSecret() {
+    setSecretStep(1);
+  }
+
+  function handleSecretPin(idx: number) {
+    if (secretStep === 1 && idx === 0) {
+      setSecretStep(2);
+      return;
+    }
+
+    if (secretStep === 2 && idx === 1) {
+      setWantListOpen(true);
+      setSecretStep(0);
+      return;
+    }
+
+    setSecretStep(0);
+  }
 
   return (
     <main
@@ -189,6 +255,7 @@ export function TornPinnedHero() {
         >
           <h1
             className="text-center text-[clamp(3rem,7.5vw,5rem)] leading-[0.9] tracking-[0.04em] text-[#f0e6d4]"
+            onPointerDown={handleTitleSecret}
             style={{
               fontFamily: "var(--font-cormorant), Georgia, serif",
               fontWeight: 600,
@@ -199,10 +266,25 @@ export function TornPinnedHero() {
         </motion.header>
 
         <div className="grid w-full gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-10">
-          <TornPage idx={0} section={whyData.want} skipMotion={skipMotion} />
-          <TornPage idx={1} section={whyData.staySame} skipMotion={skipMotion} />
+          <TornPage
+            idx={0}
+            onSecretPin={handleSecretPin}
+            section={whyData.want}
+            skipMotion={skipMotion}
+          />
+          <TornPage
+            idx={1}
+            onSecretPin={handleSecretPin}
+            section={whyData.staySame}
+            skipMotion={skipMotion}
+          />
         </div>
       </div>
+
+      <WantListOverlay
+        onClose={() => setWantListOpen(false)}
+        open={wantListOpen}
+      />
     </main>
   );
 }
