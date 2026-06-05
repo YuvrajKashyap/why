@@ -11,7 +11,7 @@ Putting two opposing truths in front of me at the same time.
 - Why I want to make it  
 - Why I don't want to stay the same  
 
-It is not an app. It is not a tool. It is just something I can open and feel instantly.
+The public surface is still just something I can open and feel instantly. It also has a hidden synced WANT list for personal goals.
 
 ## Why I built it
 
@@ -26,6 +26,7 @@ I wanted a place where I could see all the reasons in front of me. Just a person
   - Stacked on mobile
 - Each panel contains a numbered list
 - Uses motion and hover to make the page feel more intentional
+- Provides a hidden editable WANT list backed by Supabase
 
 ## Features
 
@@ -35,7 +36,8 @@ I wanted a place where I could see all the reasons in front of me. Just a person
 - Smooth entrance animations
 - Subtle hover interactions
 - Responsive layout
-- No backend or data layer
+- Hidden synced WANT list
+- Server-only Supabase writes for WANT list data
 
 ## Tech Stack
 
@@ -44,6 +46,7 @@ I wanted a place where I could see all the reasons in front of me. Just a person
 - Tailwind CSS (v4)
 - Framer Motion
 - next/font (Manrope, Cormorant Garamond)
+- Supabase
 - Vercel for hosting
 - Domain: why.yuvrajkashyap.com
 
@@ -51,6 +54,7 @@ I wanted a place where I could see all the reasons in front of me. Just a person
 
 ```
 app/
+  api/
   globals.css
   icon.svg
   layout.tsx
@@ -58,9 +62,16 @@ app/
 
 components/
   TornPinnedHero.tsx
+  WantListOverlay.tsx
 
 data/
   whyData.ts
+
+lib/
+  wantItems.ts
+
+supabase/
+  migrations/
 
 package.json
 next.config.ts
@@ -77,7 +88,14 @@ README.md
   - Built in `app/page.tsx`
   - Renders the full layout through the main component
 
-No API routes. No additional pages.
+No additional pages.
+
+API routes:
+
+- `/api/want-items`
+  - Lists and creates WANT list items
+- `/api/want-items/[id]`
+  - Updates and deletes WANT list items
 
 ## Components
 
@@ -87,10 +105,13 @@ No API routes. No additional pages.
 - TornPage  
   Internal component used to render each paper panel
 
+- WantListOverlay
+  Hidden synced WANT list editor
+
 - RootLayout  
   Sets fonts, metadata, and wraps the app
 
-## Data
+## Public Manifesto Data
 
 All content lives in:
 
@@ -105,6 +126,23 @@ data/whyData.ts
 - Each has a title and an array of items
 
 Content is static and separated from layout.
+
+## WANT List Data
+
+Synced WANT list data lives in the shared Supabase project under:
+
+```
+why.want_items
+```
+
+User-facing fields:
+
+- name
+- notes
+- link
+- price
+
+The table uses RLS with no client-facing policies. The browser talks to Next route handlers, and those handlers use a server-only Supabase service role key.
 
 ## UI Details
 
@@ -139,8 +177,8 @@ Built with Framer Motion.
 - Uses @tailwindcss/postcss
 - React compiler enabled in next config
 - No external images, textures are generated with gradients and SVG
-- No environment variables
-- No backend, database, or auth
+- Requires server-only Supabase env vars for WANT list syncing
+- No auth layer
 
 ## Local Development
 
@@ -162,6 +200,15 @@ Open:
 http://localhost:3000
 ```
 
+For WANT list syncing, create `.env.local` from `.env.example` and set:
+
+```
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+```
+
+Never expose `SUPABASE_SERVICE_ROLE_KEY` with a `NEXT_PUBLIC_` prefix.
+
 ## Production
 
 Build:
@@ -181,6 +228,7 @@ npm start
 - Push to GitHub
 - Import into Vercel
 - Deploy with default settings
+- Add the server-only Supabase environment variables in Vercel
 - Attach custom domain
 
 ## Domain
@@ -194,7 +242,6 @@ why.yuvrajkashyap.com
 - Not a SaaS
 - Not a dashboard
 - Not a notes app
-- Not backend driven
 - Not multi page
 - Not user based
 
