@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { type PointerEvent, useEffect, useState } from "react";
 import { WantListOverlay } from "@/components/WantListOverlay";
 import { whyData } from "@/data/whyData";
 
@@ -19,6 +19,12 @@ function TornPage({ idx, section, skipMotion, onSecretPin }: TornPageProps) {
   const rotation = idx === 0 ? -1.8 : 1.4;
   const hoverRotation = idx === 0 ? -0.4 : 0.3;
   const pinColor = idx === 0 ? "#c4543a" : "#3a6e8c";
+
+  function handlePinPointerDown(event: PointerEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    onSecretPin(idx);
+  }
 
   return (
     <motion.section
@@ -42,10 +48,7 @@ function TornPage({ idx, section, skipMotion, onSecretPin }: TornPageProps) {
     >
       <div
         className="absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2"
-        onPointerDown={(event) => {
-          event.stopPropagation();
-          onSecretPin(idx);
-        }}
+        onPointerDown={handlePinPointerDown}
       >
         <div
           className="relative h-5 w-5 rounded-full shadow-[0_3px_8px_rgba(0,0,0,0.4),0_1px_2px_rgba(0,0,0,0.3)]"
@@ -160,6 +163,13 @@ function TornPage({ idx, section, skipMotion, onSecretPin }: TornPageProps) {
           ))}
         </ol>
       </div>
+
+      <div
+        aria-hidden="true"
+        className="absolute left-1/2 top-0 z-40 h-14 w-14 -translate-x-1/2 -translate-y-1/2 touch-manipulation md:hidden"
+        onPointerDown={handlePinPointerDown}
+        style={{ backgroundColor: "rgba(255, 255, 255, 0.01)" }}
+      />
     </motion.section>
   );
 }
@@ -217,8 +227,8 @@ export function TornPinnedHero() {
     }
 
     if (secretStep === 2 && idx === 1) {
-      setWantListOpen(true);
       setSecretStep(0);
+      window.setTimeout(() => setWantListOpen(true), 180);
       return;
     }
 
@@ -254,8 +264,11 @@ export function TornPinnedHero() {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <h1
-            className="text-center text-[clamp(3rem,7.5vw,5rem)] leading-[0.9] tracking-[0.04em] text-[#f0e6d4]"
-            onPointerDown={handleTitleSecret}
+            className="-m-5 px-5 py-5 text-center text-[clamp(3rem,7.5vw,5rem)] leading-[0.9] tracking-[0.04em] text-[#f0e6d4] touch-manipulation md:m-0 md:p-0 md:touch-auto"
+            onPointerDown={(event) => {
+              event.preventDefault();
+              handleTitleSecret();
+            }}
             style={{
               fontFamily: "var(--font-cormorant), Georgia, serif",
               fontWeight: 600,
